@@ -104,3 +104,46 @@ class TestProductModel(unittest.TestCase):
     #
     # ADD YOUR TEST CASES HERE
     #
+    def test_read_a_product(self):
+        """It should read a product"""
+        product = ProductFactory()
+        product.id = None
+        self.assertEqual(product.id, None)
+        product.create()
+        self.assertIsNotNone(product.id)
+        found_product = Product.find(product.id)
+        self.assertEqual(found_product.id,product.id)
+        self.assertEqual(found_product.name,product.name)
+        self.assertEqual(found_product.description,product.description)
+        self.assertEqual(found_product.price,product.price)
+        self.assertEqual(found_product.available,product.available)
+        self.assertEqual(found_product.category,product.category)
+
+    def test_update_a_product(self):
+        """It should update a product"""
+        product = ProductFactory()
+        product.id = None
+        product.create()
+        self.assertIsNotNone(product.id)
+        #change it and save it
+        product.description = "testing"
+        original_id = product.id
+        product.update()
+        self.assertEqual(product.id,original_id)
+        self.assertEqual(product.description,"testing")
+        # Fetch it back and make sure the id hasn't changed
+        # but the data did change
+        products = Product.all()
+        self.assertEqual(len(products),1)
+        self.assertEqual(products[0].id,original_id)
+        self.assertEqual(products[0].description,"testing")
+    
+    def test_delete_a_product(self):
+        """It should delete a product"""
+        product = ProductFactory()
+        product.create()
+        products = product.all()
+        self.assertEqual(len(products),1)
+        product.delete()
+        products = product.all()
+        self.assertEqual(len(products),0)
